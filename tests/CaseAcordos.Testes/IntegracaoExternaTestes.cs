@@ -6,7 +6,7 @@ using Xunit;
 
 namespace CaseAcordos.Testes;
 
-public sealed class ClienteJsonPlaceholderTestes
+public sealed class IntegracaoExternaTestes
 {
     private const string UsuarioJson = """
         [{

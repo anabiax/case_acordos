@@ -4,7 +4,7 @@ using CaseAcordos.Ingestao.Integracao;
 
 namespace CaseAcordos.Testes;
 
-public sealed class TradutorTestes
+public sealed class MapeadorTestes
 {
     [Fact]
     public void Traduz_autor_com_endereco_e_empresa_conforme_de_para()
