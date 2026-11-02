@@ -1,5 +1,11 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
+﻿using CaseAcordos.Api.Configuracao;
+using CaseAcordos.Api.Interfaces;
+using CaseAcordos.Api.Modelo;
+using CaseAcordos.Api.Servicos;
+using CaseAcordos.Api.Tratamento;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using NSubstitute;
 
 namespace CaseAcordos.Testes
 {

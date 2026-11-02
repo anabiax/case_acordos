@@ -1,5 +1,7 @@
 ﻿using CaseAcordos.Api.DTO;
 using CaseAcordos.Api.Tratamento;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using System.Net;
 using System.Text;
 using System.Text.Json;
