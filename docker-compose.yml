@@ -1,0 +1,92 @@
+# Infra local: Postgres + LocalStack (SQS) + criação das filas.
+#   docker compose up -d                              -> só a infraestrutura (você roda os workers pela IDE e depura)
+#   docker compose --profile app up -d --build consumidor
+#   docker compose --profile app run --rm ingestao    -> executa uma carga e encerra
+name: case-acordos
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: acordos
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d acordos"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  localstack:
+    # A tag "latest" do LocalStack passou a exigir conta/token desde 23/03/2026.
+    # Por padrão fixamos uma tag da versão comunitária. Para usar a mais nova, defina
+    # LOCALSTACK_IMAGE=localstack/localstack:latest e LOCALSTACK_AUTH_TOKEN no arquivo .env.
+    image: ${LOCALSTACK_IMAGE:-localstack/localstack:4.12}
+    environment:
+      SERVICES: sqs
+      LOCALSTACK_AUTH_TOKEN: ${LOCALSTACK_AUTH_TOKEN:-}
+    ports:
+      - "4566:4566"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:4566/_localstack/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Cria as 3 filas. A fila principal usa redrive: após 3 recebimentos sem sucesso a mensagem vai para a DLQ de consumo.
+  sqs-init:
+    image: amazon/aws-cli
+    depends_on:
+      localstack:
+        condition: service_healthy
+    environment:
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_DEFAULT_REGION: us-east-1
+    restart: "no"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        aws --endpoint-url http://localstack:4566 sqs create-queue --queue-name acordos-dlq-consumo &&
+        aws --endpoint-url http://localstack:4566 sqs create-queue --queue-name acordos-dlq-ingestao &&
+        aws --endpoint-url http://localstack:4566 sqs create-queue --queue-name acordos --attributes '{"VisibilityTimeout":"60","RedrivePolicy":"{\"deadLetterTargetArn\":\"arn:aws:sqs:us-east-1:000000000000:acordos-dlq-consumo\",\"maxReceiveCount\":\"3\"}"}' &&
+        aws --endpoint-url http://localstack:4566 sqs list-queues
+
+  consumidor:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.consumidor
+    depends_on:
+      postgres:
+        condition: service_healthy
+      sqs-init:
+        condition: service_completed_successfully
+    environment:
+      ConnectionStrings__Acordos: Host=postgres;Port=5432;Database=acordos;Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres}
+      Filas__UrlServicoSqs: http://localstack:4566
+      Filas__ChaveAcesso: test
+      Filas__ChaveSecreta: test
+
+  ingestao:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.ingestao
+    depends_on:
+      sqs-init:
+        condition: service_completed_successfully
+    environment:
+      Filas__UrlServicoSqs: http://localstack:4566
+      Filas__ChaveAcesso: test
+      Filas__ChaveSecreta: test
+      Ingestao__GrauParalelismo: "1"
+      Ingestao__IntervaloHoras: "0"
+
+volumes:
+  pgdata:

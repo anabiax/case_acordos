@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-CaseAcordos.Consumidor-b67093f5-e716-4c53-992f-5b8d43782f46</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CaseAcordos.Contratos\CaseAcordos.Contratos.csproj" />
+    <ProjectReference Include="..\CaseAcordos.Mensageria\CaseAcordos.Mensageria.csproj" />
+    <ProjectReference Include="..\CaseAcordos.Persistencia\CaseAcordos.Persistencia.csproj" />
+  </ItemGroup>
+</Project>

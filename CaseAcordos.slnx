@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CaseAcordos.Consumidor/CaseAcordos.Consumidor.csproj" />
+    <Project Path="src/CaseAcordos.Contratos/CaseAcordos.Contratos.csproj" />
+    <Project Path="src/CaseAcordos.Ingestao/CaseAcordos.Ingestao.csproj" />
+    <Project Path="src/CaseAcordos.Mensageria/CaseAcordos.Mensageria.csproj" />
+    <Project Path="src/CaseAcordos.Persistencia/CaseAcordos.Persistencia.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CaseAcordos.Testes/CaseAcordos.Testes.csproj" />
+  </Folder>
+</Solution>
