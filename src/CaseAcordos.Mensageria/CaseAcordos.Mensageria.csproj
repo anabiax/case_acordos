@@ -10,4 +10,8 @@
     <PackageReference Include="AWSSDK.SQS" Version="3.7.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
 </Project>

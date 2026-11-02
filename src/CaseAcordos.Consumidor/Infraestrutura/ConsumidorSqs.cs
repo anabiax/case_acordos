@@ -1,8 +1,11 @@
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using CaseAcordos.Mensageria;
+using CaseAcordos.Consumidor.Configuracao;
+using CaseAcordos.Consumidor.Servicos;
+using CaseAcordos.Mensageria.Configuracao;
+using CaseAcordos.Mensageria.Infraestrutura;
 
-namespace CaseAcordos.Consumidor;
+namespace CaseAcordos.Consumidor.Infraestrutura;
 
 /// <summary>
 /// Lê a fila de acordos (long polling) e delega ao <see cref="ProcessadorMensagem"/>.

@@ -1,8 +1,9 @@
 using System.Collections.Concurrent;
 using Amazon.SQS;
 using Amazon.SQS.Model;
+using CaseAcordos.Mensageria.Configuracao;
 
-namespace CaseAcordos.Mensageria;
+namespace CaseAcordos.Mensageria.Infraestrutura;
 
 /// <summary>
 /// Descobre a URL de uma fila pelo nome e guarda em cache.

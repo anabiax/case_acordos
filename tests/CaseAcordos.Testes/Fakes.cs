@@ -5,11 +5,12 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using CaseAcordos.Contratos;
+using CaseAcordos.Contratos.Falhas;
+using CaseAcordos.Contratos.Mensagens;
 using CaseAcordos.Ingestao.DTO;
 using CaseAcordos.Ingestao.Integracao;
 using CaseAcordos.Ingestao.Interfaces;
-using CaseAcordos.Persistencia;
+using CaseAcordos.Persistencia.Interfaces;
 
 namespace CaseAcordos.Testes;
 

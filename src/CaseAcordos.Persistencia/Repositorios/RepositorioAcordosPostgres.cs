@@ -1,8 +1,10 @@
-using CaseAcordos.Contratos;
+using CaseAcordos.Contratos.Mensagens;
+using CaseAcordos.Persistencia.Excecoes;
+using CaseAcordos.Persistencia.Interfaces;
 using Dapper;
 using Npgsql;
 
-namespace CaseAcordos.Persistencia;
+namespace CaseAcordos.Persistencia.Repositorios;
 
 /// <summary>
 /// Persistência em PostgreSQL com Npgsql + Dapper.

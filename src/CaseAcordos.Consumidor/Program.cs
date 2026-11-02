@@ -1,8 +1,12 @@
 using System;
 using Amazon.SQS;
-using CaseAcordos.Consumidor;
-using CaseAcordos.Mensageria;
-using CaseAcordos.Persistencia;
+using CaseAcordos.Consumidor.Configuracao;
+using CaseAcordos.Consumidor.Infraestrutura;
+using CaseAcordos.Consumidor.Servicos;
+using CaseAcordos.Mensageria.Configuracao;
+using CaseAcordos.Mensageria.Infraestrutura;
+using CaseAcordos.Persistencia.Interfaces;
+using CaseAcordos.Persistencia.Repositorios;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

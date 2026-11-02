@@ -1,4 +1,4 @@
-namespace CaseAcordos.Mensageria;
+namespace CaseAcordos.Mensageria.Configuracao;
 
 /// <summary>
 /// Configuração das filas (seção "Filas"). Com <see cref="UrlServicoSqs"/> preenchida usa LocalStack;

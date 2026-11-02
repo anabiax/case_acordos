@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
-using CaseAcordos.Contratos;
+using CaseAcordos.Contratos.Falhas;
+using CaseAcordos.Contratos.Mensagens;
 
 namespace CaseAcordos.Ingestao.Interfaces;
 

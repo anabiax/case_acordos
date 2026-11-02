@@ -1,6 +1,7 @@
-using CaseAcordos.Contratos;
+using CaseAcordos.Contratos.Mensagens;
+using CaseAcordos.Persistencia.Excecoes;
 
-namespace CaseAcordos.Persistencia;
+namespace CaseAcordos.Persistencia.Interfaces;
 
 public interface IRepositorioAcordos
 {

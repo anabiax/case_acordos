@@ -1,4 +1,4 @@
-namespace CaseAcordos.Consumidor;
+namespace CaseAcordos.Consumidor.Configuracao;
 
 /// <summary>Seção "Consumidor".</summary>
 public sealed class OpcoesConsumidor

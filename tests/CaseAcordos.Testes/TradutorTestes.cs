@@ -1,4 +1,4 @@
-using CaseAcordos.Contratos;
+using CaseAcordos.Contratos.Mensagens;
 using CaseAcordos.Ingestao.DTO;
 using CaseAcordos.Ingestao.Integracao;
 

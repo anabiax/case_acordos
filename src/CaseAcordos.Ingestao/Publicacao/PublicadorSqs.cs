@@ -3,9 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using CaseAcordos.Contratos;
+using CaseAcordos.Contratos.Falhas;
+using CaseAcordos.Contratos.Mensagens;
 using CaseAcordos.Ingestao.Interfaces;
-using CaseAcordos.Mensageria;
+using CaseAcordos.Mensageria.Configuracao;
+using CaseAcordos.Mensageria.Infraestrutura;
 
 namespace CaseAcordos.Ingestao.Publicacao;
 

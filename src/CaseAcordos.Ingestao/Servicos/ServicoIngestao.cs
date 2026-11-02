@@ -1,4 +1,5 @@
 using CaseAcordos.Contratos;
+using CaseAcordos.Contratos.Falhas;
 using CaseAcordos.Ingestao.DTO;
 using CaseAcordos.Ingestao.Integracao;
 using CaseAcordos.Ingestao.Interfaces;

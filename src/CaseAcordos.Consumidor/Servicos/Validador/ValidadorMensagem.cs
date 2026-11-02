@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using CaseAcordos.Contratos;
+using CaseAcordos.Contratos.Mensagens;
 
-namespace CaseAcordos.Consumidor;
+namespace CaseAcordos.Consumidor.Servicos.Validador;
 
 /// <summary>Valida a mensagem antes de tocar no banco. Devolve o motivo do erro, ou null se estiver válida.</summary>
 public static class ValidadorMensagem

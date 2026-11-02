@@ -1,6 +1,6 @@
 using System;
 
-namespace CaseAcordos.Contratos;
+namespace CaseAcordos.Contratos.Falhas;
 
 /// <summary>
 /// Mensagem publicada na DLQ de ingestão quando uma unidade da carga (usuários, acordos de um usuário,

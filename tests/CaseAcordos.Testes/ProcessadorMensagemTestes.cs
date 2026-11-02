@@ -1,9 +1,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using CaseAcordos.Consumidor;
-using CaseAcordos.Contratos;
+using CaseAcordos.Consumidor.Servicos;
+using CaseAcordos.Contratos.Mensagens;
 using CaseAcordos.Persistencia;
+using CaseAcordos.Persistencia.Excecoes;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 

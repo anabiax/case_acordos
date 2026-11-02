@@ -1,6 +1,6 @@
 using System;
 
-namespace CaseAcordos.Persistencia;
+namespace CaseAcordos.Persistencia.Excecoes;
 
 /// <summary>
 /// Falha ao gravar no banco, já classificada. Retentável = transitória (conexão, timeout, deadlock);

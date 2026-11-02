@@ -1,8 +1,9 @@
 using Amazon;
 using Amazon.Runtime;
 using Amazon.SQS;
+using CaseAcordos.Mensageria.Configuracao;
 
-namespace CaseAcordos.Mensageria;
+namespace CaseAcordos.Mensageria.Infraestrutura;
 
 public static class FabricaSqs
 {

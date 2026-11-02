@@ -1,4 +1,4 @@
-namespace CaseAcordos.Contratos;
+namespace CaseAcordos.Contratos.Mensagens;
 
 /// <summary>
 /// Contrato da mensagem publicada na fila: um acordo, com o autor embutido e seus documentos.

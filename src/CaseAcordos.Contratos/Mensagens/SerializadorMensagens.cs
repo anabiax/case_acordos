@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace CaseAcordos.Contratos;
+namespace CaseAcordos.Contratos.Mensagens;
 
 /// <summary>Serialização única das mensagens da fila (camelCase, leitura sem diferenciar maiúsculas).</summary>
 public static class SerializadorMensagens

@@ -5,7 +5,8 @@ using CaseAcordos.Ingestao.Interfaces;
 using CaseAcordos.Ingestao.Publicacao;
 using CaseAcordos.Ingestao.Resiliencia;
 using CaseAcordos.Ingestao.Servicos;
-using CaseAcordos.Mensageria;
+using CaseAcordos.Mensageria.Configuracao;
+using CaseAcordos.Mensageria.Infraestrutura;
 
 var builder = Host.CreateApplicationBuilder(args);
 

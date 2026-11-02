@@ -1,4 +1,4 @@
-namespace CaseAcordos.Consumidor;
+namespace CaseAcordos.Consumidor.Servicos;
 
 public enum TipoResultado
 {

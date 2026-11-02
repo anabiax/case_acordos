@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using CaseAcordos.Contratos;
-using CaseAcordos.Persistencia;
+using CaseAcordos.Consumidor.Servicos.Validador;
+using CaseAcordos.Contratos.Mensagens;
+using CaseAcordos.Persistencia.Excecoes;
+using CaseAcordos.Persistencia.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace CaseAcordos.Consumidor;
+namespace CaseAcordos.Consumidor.Servicos;
 
 /// <summary>
 /// Camada de serviço do consumidor: interpreta o corpo da mensagem, valida, grava e CLASSIFICA o resultado.
