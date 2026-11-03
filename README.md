@@ -31,7 +31,7 @@ Hierarquia respeitada: **Autor → Acordos → Documentos** (`users` → `albums
 
 ![Arquitetura da solução](docs/arquitetura.png)
 
-> O arquivo editável é `docs/arquitetura.drawio` (abra em [app.diagrams.net](https://app.diagrams.net) ou na extensão Draw.io do VS Code). O PNG é a exportação usada aqui.
+> O arquivo editável é `docs/arquitetura.drawio` (abra em [app.diagrams.net](https://app.diagrams.net/#G19zE0bCLZEJ4YiZV4KVBavEiSch2cZ28F#%7B%22pageId%22%3A%22YS1uaNdUSI1EfS0RRH1M%22%7D). O PNG é a exportação usada aqui.
 
 <details>
 <summary>Versão em texto (fluxo da ingestão)</summary>
@@ -59,8 +59,8 @@ Hierarquia respeitada: **Autor → Acordos → Documentos** (`users` → `albums
 | Worker `CaseAcordos.Ingestao` (disparo manual ou timer de N horas) | EventBridge Scheduler (a cada 3h) + Lambda de Ingestão |
 | LocalStack SQS: `acordos`, `acordos-dlq-consumo`, `acordos-dlq-ingestao` | SQS + DLQ de consumo (redrive) + DLQ de ingestão (destino On-Failure do Lambda) |
 | Worker `CaseAcordos.Consumidor` | Lambda com trigger SQS (a mesma classe `ProcessadorMensagem`) |
-| PostgreSQL no docker-compose | RDS PostgreSQL (acesso via RDS Proxy) |
-| `CaseAcordos.Api` (Kestrel local) | Container (ECS/App Runner) ou Lambda atrás de API Gateway |
+| PostgreSQL no docker-compose | RDS PostgreSQL (Lambdas via RDS Proxy; API em ECS com pool do Npgsql) |
+| `CaseAcordos.Api` (Kestrel local) | Container (ECS) |
 | Logs JSON no console | Logs JSON enviados ao Datadog |
 
 Para trocar o LocalStack pelo SQS real basta deixar `Filas:UrlServicoSqs` em branco: o código usa a cadeia padrão de credenciais da AWS e resolve a URL das filas por `GetQueueUrl`.
@@ -121,7 +121,7 @@ dotnet run --project src/CaseAcordos.Api               # terminal 3 (API em http
 docker compose exec postgres psql -U postgres -d acordos -c "select (select count(*) from autor) autores, (select count(*) from acordo) acordos, (select count(*) from documento) documentos;"
 ```
 
-Pelo que conheço do jsonplaceholder, o esperado é **10 autores, 100 acordos e 5000 documentos**. Rode a ingestão **de novo**: os totais não podem mudar, o que comprova a idempotência.
+Do jsonplaceholder, o esperado é **10 autores, 100 acordos e 5000 documentos**. Rode a ingestão **de novo**: os totais não podem mudar, o que comprova a idempotência.
 
 ---
 
