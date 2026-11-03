@@ -90,11 +90,13 @@ namespace CaseAcordos.Api.Repositorios
                     new CommandDefinition(SqlAutor, new { AutorId = autorId }, cancellationToken: cancellationToken)),
                 cancellationToken);
 
+
         public Task<IReadOnlyList<AcordoRegistro>> ListarAcordosAsync(int autorId, CancellationToken cancellationToken)
             => ExecutarAsync<IReadOnlyList<AcordoRegistro>>(
                 async conexao => (await conexao.QueryAsync<AcordoRegistro>(
                     new CommandDefinition(SqlAcordosDoAutor, new { AutorId = autorId }, cancellationToken: cancellationToken))).ToList(),
                 cancellationToken);
+
 
         public Task<IReadOnlyList<DocumentoRegistro>> ListarDocumentosPaginadosPorAutorAsync(
             int autorId, long deslocamento, int limite, CancellationToken cancellationToken)
@@ -106,6 +108,7 @@ namespace CaseAcordos.Api.Repositorios
                         cancellationToken: cancellationToken))).ToList(),
                 cancellationToken);
 
+
         public Task<AcordoRegistro?> ObterAcordoDoAutorAsync(int autorId, int acordoId, CancellationToken cancellationToken)
             => ExecutarAsync(
                 conexao => conexao.QuerySingleOrDefaultAsync<AcordoRegistro>(
@@ -114,6 +117,7 @@ namespace CaseAcordos.Api.Repositorios
                         new { AutorId = autorId, AcordoId = acordoId },
                         cancellationToken: cancellationToken)),
                 cancellationToken);
+
 
         public Task<IReadOnlyList<DocumentoRegistro>> ListarDocumentosDoAcordoAsync(
             int acordoId, long deslocamento, int limite, CancellationToken cancellationToken)
@@ -124,6 +128,7 @@ namespace CaseAcordos.Api.Repositorios
                         new { AcordoId = acordoId, Deslocamento = deslocamento, Limite = limite },
                         cancellationToken: cancellationToken))).ToList(),
                 cancellationToken);
+
 
         /// <summary>Abre a conexão (do pool), executa a consulta e traduz falhas do driver em <see cref="FalhaConsultaException"/>.</summary>
         private async Task<T> ExecutarAsync<T>(Func<NpgsqlConnection, Task<T>> consulta, CancellationToken cancellationToken)

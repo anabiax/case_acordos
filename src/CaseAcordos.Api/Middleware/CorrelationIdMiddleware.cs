@@ -55,5 +55,4 @@ namespace CaseAcordos.Api.Middleware
             return FormatoValido().IsMatch(recebido) ? recebido : Guid.NewGuid().ToString("N");
         }
     }
-
 }

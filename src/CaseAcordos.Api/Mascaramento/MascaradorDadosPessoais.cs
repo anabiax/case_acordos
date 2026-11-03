@@ -11,6 +11,7 @@ namespace CaseAcordos.Api.Mascaramento
         private const char Mascara = '*';
         private const string EnderecoOculto = "********";
 
+
         /// <summary>"Leanne Graham" → "L*** G***".</summary>
         public static string? MascararNome(string? nome)
         {
@@ -20,6 +21,7 @@ namespace CaseAcordos.Api.Mascaramento
                 .Select(p => $"{p[0]}***");
             return string.Join(' ', partes);
         }
+
 
         /// <summary>"joao.silva@empresa.com" → "j***@empresa.com" (o domínio é mantido).</summary>
         public static string? MascararEmail(string? email)
@@ -31,6 +33,7 @@ namespace CaseAcordos.Api.Mascaramento
                 ? "***"
                 : $"{email[0]}***{email[arroba..]}";
         }
+
 
         /// <summary>Mantém separadores e apenas os 4 últimos dígitos: "(11) 99999-0000" → "(**) *****-0000".</summary>
         public static string? MascararTelefone(string? telefone, int digitosVisiveis = 4)
@@ -57,6 +60,7 @@ namespace CaseAcordos.Api.Mascaramento
 
             return resultado.ToString();
         }
+
 
         /// <summary>O endereço completo é oculto por inteiro (rua, complemento e CEP identificam a residência).</summary>
         public static string? MascararEndereco(string? endereco)

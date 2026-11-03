@@ -31,6 +31,7 @@ namespace CaseAcordos.Api.Configuracao
 
                 opcoes.AddSecurityDefinition(EsquemaApiKey, esquema);
                 opcoes.AddSecurityRequirement(new OpenApiSecurityRequirement { [esquema] = Array.Empty<string>() });
+                opcoes.DocumentFilter<DocumentoSaudeFilter>();
 
                 var arquivoXml = Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml");
                 if (File.Exists(arquivoXml))

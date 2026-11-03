@@ -5,7 +5,6 @@ using System.Text;
 
 namespace CaseAcordos.Api.Middleware
 {
-
     /// <summary>
     /// Autenticação simples por API Key fixa (cabeçalho <c>X-Api-Key</c>), lida de variável de ambiente.
     /// Sem a chave correta → 401. Rotas públicas: /health*, /swagger* e a raiz (redireciona ao Swagger).

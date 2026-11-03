@@ -138,5 +138,4 @@ namespace CaseAcordos.Api.Servicos
                     $"O tamanho da página deve estar entre {LimitesPaginacao.TamanhoMinimo} e {LimitesPaginacao.TamanhoMaximo}.");
         }
     }
-
 }

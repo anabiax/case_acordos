@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CaseAcordos.Api.Controllers
 {
-    /// <summary>Consulta de acordos e documentos por autor. Somente HTTP: a regra vive no serviço.</summary>
     [ApiController]
     [Route("api/v1/usuarios")]
     [Produces("application/json")]
@@ -14,7 +13,7 @@ namespace CaseAcordos.Api.Controllers
     public sealed class AcordosController(IServicoConsultaAcordos servico) : ControllerBase
     {
         /// <summary>
-        /// Retorna, de forma consolidada, os dados do autor, o resumo, os acordos e os documentos de cada acordo.
+        /// Retorna de forma consolidada os dados do autor, o resumo, os acordos e os documentos de cada acordo.
         /// </summary>
         /// <remarks>
         /// Os documentos são paginados <b>por acordo</b> (padrão: 20 por acordo, máximo 100). Cada acordo informa
@@ -34,16 +33,13 @@ namespace CaseAcordos.Api.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status503ServiceUnavailable)]
-        public async Task<ActionResult<ConsultaAcordosDto>> ObterAcordosDoAutor(
-            [FromRoute, Range(1, int.MaxValue)] int id,
+        public async Task<ActionResult<ConsultaAcordosDto>> ObterAcordosDoAutor([FromRoute, Range(1, int.MaxValue)] int id,
             [FromQuery, Range(LimitesPaginacao.PaginaMinima, LimitesPaginacao.PaginaMaxima)]
-        int paginaDocumentos = LimitesPaginacao.PaginaMinima,
+                int paginaDocumentos = LimitesPaginacao.PaginaMinima,
             [FromQuery, Range(LimitesPaginacao.TamanhoMinimo, LimitesPaginacao.TamanhoMaximo)]
-        int tamanhoPaginaDocumentos = LimitesPaginacao.TamanhoPadrao,
-            CancellationToken cancellationToken = default)
+                int tamanhoPaginaDocumentos = LimitesPaginacao.TamanhoPadrao, CancellationToken cancellationToken = default)
         {
-            var resposta = await servico.ConsultarPorAutorAsync(
-                id, paginaDocumentos, tamanhoPaginaDocumentos, cancellationToken);
+            var resposta = await servico.ConsultarPorAutorAsync(id, paginaDocumentos, tamanhoPaginaDocumentos, cancellationToken);
 
             return Ok(resposta);
         }
@@ -63,20 +59,16 @@ namespace CaseAcordos.Api.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status503ServiceUnavailable)]
-        public async Task<ActionResult<PaginaDocumentosDto>> ObterDocumentosDoAcordo(
-            [FromRoute, Range(1, int.MaxValue)] int id,
+        public async Task<ActionResult<PaginaDocumentosDto>> ObterDocumentosDoAcordo([FromRoute, Range(1, int.MaxValue)] int id,
             [FromRoute, Range(1, int.MaxValue)] int acordoId,
             [FromQuery, Range(LimitesPaginacao.PaginaMinima, LimitesPaginacao.PaginaMaxima)]
-        int pagina = LimitesPaginacao.PaginaMinima,
+                int pagina = LimitesPaginacao.PaginaMinima,
             [FromQuery, Range(LimitesPaginacao.TamanhoMinimo, LimitesPaginacao.TamanhoMaximo)]
-        int tamanhoPagina = LimitesPaginacao.TamanhoPadrao,
-            CancellationToken cancellationToken = default)
+                int tamanhoPagina = LimitesPaginacao.TamanhoPadrao, CancellationToken cancellationToken = default)
         {
-            var resposta = await servico.ConsultarDocumentosDoAcordoAsync(
-                id, acordoId, pagina, tamanhoPagina, cancellationToken);
+            var resposta = await servico.ConsultarDocumentosDoAcordoAsync(id, acordoId, pagina, tamanhoPagina, cancellationToken);
 
             return Ok(resposta);
         }
     }
-
 }

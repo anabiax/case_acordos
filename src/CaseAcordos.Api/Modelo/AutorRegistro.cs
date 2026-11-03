@@ -17,20 +17,4 @@
         public string? EmpresaNome { get; init; }
         public string? EmpresaSegmento { get; init; }
     }
-
-    public sealed class AcordoRegistro
-    {
-        public int Id { get; init; }
-        public string Titulo { get; init; } = string.Empty;
-        public int QuantidadeDocumentos { get; init; }
-    }
-
-    public sealed class DocumentoRegistro
-    {
-        public int Id { get; init; }
-        public int AcordoId { get; init; }
-        public string Titulo { get; init; } = string.Empty;
-        public string Url { get; init; } = string.Empty;
-        public string ThumbnailUrl { get; init; } = string.Empty;
-    }
 }

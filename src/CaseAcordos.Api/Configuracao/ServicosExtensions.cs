@@ -1,4 +1,5 @@
-﻿using CaseAcordos.Api.Interfaces;
+﻿using CaseAcordos.Api.DTO;
+using CaseAcordos.Api.Interfaces;
 using CaseAcordos.Api.Middleware;
 using CaseAcordos.Api.Repositorios;
 using CaseAcordos.Api.Servicos;
@@ -95,16 +96,11 @@ namespace CaseAcordos.Api.Configuracao
         }
 
         private static Task EscreverRelatorioAsync(HttpContext contexto, HealthReport relatorio)
-            => contexto.Response.WriteAsJsonAsync(new
-            {
-                status = relatorio.Status.ToString(),
-                duracaoMs = (long)relatorio.TotalDuration.TotalMilliseconds,
-                verificacoes = relatorio.Entries.Select(e => new
-                {
-                    nome = e.Key,
-                    status = e.Value.Status.ToString(),
-                    descricao = e.Value.Description
-                })
-            });
+            => contexto.Response.WriteAsJsonAsync(new RelatorioSaudeDto(
+                relatorio.Status.ToString(),
+                (long)relatorio.TotalDuration.TotalMilliseconds,
+                relatorio.Entries
+                    .Select(e => new VerificacaoSaudeDto(e.Key, e.Value.Status.ToString(), e.Value.Description))
+                    .ToList()));
     }
 }
