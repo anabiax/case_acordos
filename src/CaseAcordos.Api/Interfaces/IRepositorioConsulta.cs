@@ -7,25 +7,24 @@ namespace CaseAcordos.Api.Interfaces
     /// </summary>
     public interface IRepositorioConsulta
     {
-        Task<AutorRegistro?> ObterAutorAsync(int autorId, CancellationToken cancellationToken);
+        Task<AutorRegistro?> ObterAutorPorIdExternoAsync(int autorId, CancellationToken cancellationToken);
 
 
         /// <summary>Acordos do autor, já com a contagem total de documentos de cada um.</summary>
-        Task<IReadOnlyList<AcordoRegistro>> ListarAcordosAsync(int autorId, CancellationToken cancellationToken);
+        Task<IReadOnlyList<AcordoRegistro>> ListarAcordosPorAutorExternoAsync(int autorId, CancellationToken cancellationToken);
 
 
         /// <summary>
         /// Uma página de documentos POR acordo, para todos os acordos do autor, em uma única ida ao banco.
         /// <paramref name="deslocamento"/> é o número de documentos a pular dentro de cada acordo.
         /// </summary>
-        Task<IReadOnlyList<DocumentoRegistro>> ListarDocumentosPaginadosPorAutorAsync(
-            int autorId, long deslocamento, int limite, CancellationToken cancellationToken);
+        Task<IReadOnlyList<DocumentoRegistro>> ListarDocumentosPaginadosPorAutorExternoAsync(int autorId, long deslocamento, int limite, CancellationToken cancellationToken);
 
 
         /// <summary>Acordo (com contagem de documentos) somente se pertencer ao autor informado.</summary>
-        Task<AcordoRegistro?> ObterAcordoDoAutorAsync(int autorId, int acordoId, CancellationToken cancellationToken);
+        Task<AcordoRegistro?> ObterAcordoDoAutorPorIdExternoAsync(int autorId, int acordoId, CancellationToken cancellationToken);
 
 
-        Task<IReadOnlyList<DocumentoRegistro>> ListarDocumentosDoAcordoAsync(int acordoId, long deslocamento, int limite, CancellationToken cancellationToken);
+        Task<IReadOnlyList<DocumentoRegistro>> ListarDocumentosDoAcordoPorIdExternoAsync(int acordoId, long deslocamento, int limite, CancellationToken cancellationToken);
     }
 }

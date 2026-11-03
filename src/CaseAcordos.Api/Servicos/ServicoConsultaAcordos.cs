@@ -24,27 +24,29 @@ namespace CaseAcordos.Api.Servicos
             ValidarId(autorId, "autor");
             ValidarPaginacao(paginaDocumentos, tamanhoPaginaDocumentos);
 
-            var autor = await repositorio.ObterAutorAsync(autorId, cancellationToken)
+            // Busca utilizando o ID externo (número inteiro da API)
+            var autor = await repositorio.ObterAutorPorIdExternoAsync(autorId, cancellationToken)
                 ?? throw new RecursoNaoEncontradoException($"Autor {autorId} não encontrado.");
 
-            var acordos = await repositorio.ListarAcordosAsync(autorId, cancellationToken);
+            var acordos = await repositorio.ListarAcordosPorAutorExternoAsync(autorId, cancellationToken);
 
             IReadOnlyList<DocumentoRegistro> documentos = acordos.Count == 0
                 ? Array.Empty<DocumentoRegistro>()
-                : await repositorio.ListarDocumentosPaginadosPorAutorAsync(
+                : await repositorio.ListarDocumentosPaginadosPorAutorExternoAsync(
                     autorId,
                     CalcularDeslocamento(paginaDocumentos, tamanhoPaginaDocumentos),
                     tamanhoPaginaDocumentos,
                     cancellationToken);
 
-            var documentosPorAcordo = documentos.ToLookup(d => d.AcordoId);
+            // Agrupa os documentos utilizando o ID externo do acordo correspondente
+            var documentosPorAcordo = documentos.ToLookup(d => d.AcordoIdExterno);
 
             var acordosDto = acordos
                 .Select(a => new AcordoDto(
-                    a.Id,
+                    a.IdExterno, // Retorna o ID externo numérico para o contrato da API
                     a.Titulo,
                     a.QuantidadeDocumentos,
-                    documentosPorAcordo[a.Id].Select(ParaDto).ToList(),
+                    documentosPorAcordo[a.IdExterno].Select(ParaDto).ToList(),
                     PaginacaoDto.Criar(paginaDocumentos, tamanhoPaginaDocumentos, a.QuantidadeDocumentos)))
                 .ToList();
 
@@ -64,16 +66,17 @@ namespace CaseAcordos.Api.Servicos
             ValidarId(acordoId, "acordo");
             ValidarPaginacao(pagina, tamanhoPagina);
 
-            var acordo = await repositorio.ObterAcordoDoAutorAsync(autorId, acordoId, cancellationToken)
+            // Busca o acordo utilizando os IDs externos
+            var acordo = await repositorio.ObterAcordoDoAutorPorIdExternoAsync(autorId, acordoId, cancellationToken)
                 ?? throw new RecursoNaoEncontradoException($"Acordo {acordoId} não encontrado para o autor {autorId}.");
 
             IReadOnlyList<DocumentoRegistro> documentos = acordo.QuantidadeDocumentos == 0
                 ? Array.Empty<DocumentoRegistro>()
-                : await repositorio.ListarDocumentosDoAcordoAsync(
+                : await repositorio.ListarDocumentosDoAcordoPorIdExternoAsync(
                     acordoId, CalcularDeslocamento(pagina, tamanhoPagina), tamanhoPagina, cancellationToken);
 
             return new PaginaDocumentosDto(
-                acordo.Id,
+                acordo.IdExterno,
                 acordo.Titulo,
                 documentos.Select(ParaDto).ToList(),
                 PaginacaoDto.Criar(pagina, tamanhoPagina, acordo.QuantidadeDocumentos));
@@ -97,7 +100,7 @@ namespace CaseAcordos.Api.Servicos
         private AutorDto MontarAutor(AutorRegistro autor)
         {
             var dto = new AutorDto(
-                autor.Id,
+                autor.Id, // Garante que o DTO exponha o ID numérico original
                 autor.Nome,
                 autor.Email,
                 autor.Telefone,
@@ -116,7 +119,7 @@ namespace CaseAcordos.Api.Servicos
             };
         }
 
-        private static DocumentoDto ParaDto(DocumentoRegistro d) => new(d.Id, d.Titulo, d.Url, d.ThumbnailUrl);
+        private static DocumentoDto ParaDto(DocumentoRegistro d) => new(d.IdExterno, d.Titulo, d.Url, d.ThumbnailUrl);
 
         private static long CalcularDeslocamento(int pagina, int tamanhoPagina)
             => (pagina - 1L) * tamanhoPagina;

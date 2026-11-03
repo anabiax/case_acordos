@@ -24,7 +24,7 @@ namespace CaseAcordos.Testes
                 configuracao.AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     ["Autenticacao:ApiKey"] = ApiKey,
-                    ["ConnectionStrings:Postgres"] = "Host=localhost;Database=teste;Username=teste;Password=teste"
+                    ["ConnectionStrings:Acordos"] = "Host=localhost;Database=teste;Username=teste;Password=teste"
                 }));
 
             builder.ConfigureServices(servicos =>

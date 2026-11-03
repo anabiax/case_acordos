@@ -5,7 +5,7 @@
     // sem depender da ordem nem de tipos exatos de um construtor posicional.
     public sealed class AcordoRegistro
     {
-        public int Id { get; init; }
+        public int IdExterno { get; init; }
         public string Titulo { get; init; } = string.Empty;
         public int QuantidadeDocumentos { get; init; }
     }

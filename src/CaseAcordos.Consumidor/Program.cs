@@ -13,32 +13,43 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 
-var builder = Host.CreateApplicationBuilder(args);
+namespace CaseAcordos.Consumidor;
 
-builder.Logging.ClearProviders();
-builder.Logging.AddJsonConsole(o =>
+public static class Program
 {
-    o.IncludeScopes = true;
-    o.UseUtcTimestamp = true;
-    o.TimestampFormat = "yyyy-MM-ddTHH:mm:ss.fffZ ";
-});
+    public static async Task Main(string[] args)
+    {
+        var builder = Host.CreateApplicationBuilder(args);
 
-var config = builder.Configuration;
-var opcoesFilas = config.GetSection(OpcoesFilas.Secao).Get<OpcoesFilas>() ?? new OpcoesFilas();
-var opcoesConsumidor = config.GetSection(OpcoesConsumidor.Secao).Get<OpcoesConsumidor>() ?? new OpcoesConsumidor();
-var stringConexao = config.GetConnectionString("Acordos")
-    ?? throw new InvalidOperationException("ConnectionStrings:Acordos não configurada.");
+        builder.Logging.ClearProviders();
+        builder.Logging.AddJsonConsole(o =>
+        {
+            o.IncludeScopes = true;
+            o.UseUtcTimestamp = true;
+            o.TimestampFormat = "yyyy-MM-ddTHH:mm:ss.fffZ ";
+        });
 
-builder.Services.AddSingleton(opcoesFilas);
-builder.Services.AddSingleton(opcoesConsumidor);
+        var config = builder.Configuration;
+        var opcoesFilas = config.GetSection(OpcoesFilas.Secao).Get<OpcoesFilas>()
+            ?? new OpcoesFilas();
+        var opcoesConsumidor = config.GetSection(OpcoesConsumidor.Secao).Get<OpcoesConsumidor>()
+            ?? new OpcoesConsumidor();
+        var stringConexao = config.GetConnectionString("Acordos")
+            ?? throw new InvalidOperationException(
+                "ConnectionStrings:Acordos não configurada.");
 
-builder.Services.AddSingleton<IAmazonSQS>(_ => FabricaSqs.Criar(opcoesFilas));
-builder.Services.AddSingleton<ResolvedorUrlFila>();
+        builder.Services.AddSingleton(opcoesFilas);
+        builder.Services.AddSingleton(opcoesConsumidor);
 
-builder.Services.AddSingleton(_ => NpgsqlDataSource.Create(stringConexao));
-builder.Services.AddSingleton<IRepositorioAcordos, RepositorioAcordosPostgres>();
-builder.Services.AddSingleton<ProcessadorMensagem>();
+        builder.Services.AddSingleton<IAmazonSQS>(_ => FabricaSqs.Criar(opcoesFilas));
+        builder.Services.AddSingleton<ResolvedorUrlFila>();
 
-builder.Services.AddHostedService<ConsumidorSqs>();
+        builder.Services.AddSingleton(_ => NpgsqlDataSource.Create(stringConexao));
+        builder.Services.AddSingleton<IRepositorioAcordos, RepositorioAcordosPostgres>();
+        builder.Services.AddSingleton<ProcessadorMensagem>();
 
-await builder.Build().RunAsync();
+        builder.Services.AddHostedService<ConsumidorSqs>();
+
+        await builder.Build().RunAsync();
+    }
+}

@@ -35,8 +35,8 @@ namespace CaseAcordos.Testes
 
         private static DocumentoRegistro Doc(int id, int acordoId) => new()
         {
-            Id = id,
-            AcordoId = acordoId,
+            IdExterno = id,
+            AcordoIdExterno = acordoId,
             Titulo = $"Documento {id}",
             Url = $"https://exemplo/doc/{id}",
             ThumbnailUrl = $"https://exemplo/thumb/{id}"
@@ -47,13 +47,13 @@ namespace CaseAcordos.Testes
         [Fact]
         public async Task Consultar_AutorExistente_RetornaAutorResumoAcordosEDocumentos()
         {
-            _repositorio.ObterAutorAsync(1, Arg.Any<CancellationToken>()).Returns(AutorPadrao());
-            _repositorio.ListarAcordosAsync(1, Arg.Any<CancellationToken>()).Returns(new List<AcordoRegistro>
+            _repositorio.ObterAutorPorIdExternoAsync(1, Arg.Any<CancellationToken>()).Returns(AutorPadrao());
+            _repositorio.ListarAcordosPorAutorExternoAsync(1, Arg.Any<CancellationToken>()).Returns(new List<AcordoRegistro>
         {
-            new() { Id = 10, Titulo = "Acordo A", QuantidadeDocumentos = 3 },
-            new() { Id = 11, Titulo = "Acordo B", QuantidadeDocumentos = 1 }
+            new() { IdExterno = 10, Titulo = "Acordo A", QuantidadeDocumentos = 3 },
+            new() { IdExterno = 11, Titulo = "Acordo B", QuantidadeDocumentos = 1 }
         });
-            _repositorio.ListarDocumentosPaginadosPorAutorAsync(1, 0, 2, Arg.Any<CancellationToken>())
+            _repositorio.ListarDocumentosPaginadosPorAutorExternoAsync(1, 0, 2, Arg.Any<CancellationToken>())
                 .Returns(new List<DocumentoRegistro> { Doc(100, 10), Doc(101, 10), Doc(200, 11) });
 
             var resposta = await CriarServico().ConsultarPorAutorAsync(1, 1, 2, CancellationToken.None);
@@ -80,12 +80,12 @@ namespace CaseAcordos.Testes
         [Fact]
         public async Task Consultar_InformaMetadadosDePaginacaoPorAcordo()
         {
-            _repositorio.ObterAutorAsync(1, Arg.Any<CancellationToken>()).Returns(AutorPadrao());
-            _repositorio.ListarAcordosAsync(1, Arg.Any<CancellationToken>()).Returns(new List<AcordoRegistro>
+            _repositorio.ObterAutorPorIdExternoAsync(1, Arg.Any<CancellationToken>()).Returns(AutorPadrao());
+            _repositorio.ListarAcordosPorAutorExternoAsync(1, Arg.Any<CancellationToken>()).Returns(new List<AcordoRegistro>
         {
-            new() { Id = 10, Titulo = "Grande", QuantidadeDocumentos = 120 }
+            new() { IdExterno = 10, Titulo = "Grande", QuantidadeDocumentos = 120 }
         });
-            _repositorio.ListarDocumentosPaginadosPorAutorAsync(1, 40, 20, Arg.Any<CancellationToken>())
+            _repositorio.ListarDocumentosPaginadosPorAutorExternoAsync(1, 40, 20, Arg.Any<CancellationToken>())
                 .Returns(new List<DocumentoRegistro> { Doc(41, 10) });
 
             var resposta = await CriarServico().ConsultarPorAutorAsync(1, 3, 20, CancellationToken.None);
@@ -101,25 +101,25 @@ namespace CaseAcordos.Testes
         [Fact]
         public async Task Consultar_PaginaCalculaDeslocamentoCorreto()
         {
-            _repositorio.ObterAutorAsync(1, Arg.Any<CancellationToken>()).Returns(AutorPadrao());
-            _repositorio.ListarAcordosAsync(1, Arg.Any<CancellationToken>()).Returns(new List<AcordoRegistro>
+            _repositorio.ObterAutorPorIdExternoAsync(1, Arg.Any<CancellationToken>()).Returns(AutorPadrao());
+            _repositorio.ListarAcordosPorAutorExternoAsync(1, Arg.Any<CancellationToken>()).Returns(new List<AcordoRegistro>
         {
-            new() { Id = 10, Titulo = "A", QuantidadeDocumentos = 500 }
+            new() { IdExterno = 10, Titulo = "A", QuantidadeDocumentos = 500 }
         });
-            _repositorio.ListarDocumentosPaginadosPorAutorAsync(default, default, default, default)
+            _repositorio.ListarDocumentosPaginadosPorAutorExternoAsync(default, default, default, default)
                 .ReturnsForAnyArgs(new List<DocumentoRegistro>());
 
             await CriarServico().ConsultarPorAutorAsync(1, 5, 50, CancellationToken.None);
 
             await _repositorio.Received(1)
-                .ListarDocumentosPaginadosPorAutorAsync(1, 200, 50, Arg.Any<CancellationToken>());
+                .ListarDocumentosPaginadosPorAutorExternoAsync(1, 200, 50, Arg.Any<CancellationToken>());
         }
 
         [Fact]
         public async Task Consultar_AutorSemAcordos_RetornaListasVaziasSemConsultarDocumentos()
         {
-            _repositorio.ObterAutorAsync(1, Arg.Any<CancellationToken>()).Returns(AutorPadrao());
-            _repositorio.ListarAcordosAsync(1, Arg.Any<CancellationToken>()).Returns(new List<AcordoRegistro>());
+            _repositorio.ObterAutorPorIdExternoAsync(1, Arg.Any<CancellationToken>()).Returns(AutorPadrao());
+            _repositorio.ListarAcordosPorAutorExternoAsync(1, Arg.Any<CancellationToken>()).Returns(new List<AcordoRegistro>());
 
             var resposta = await CriarServico().ConsultarPorAutorAsync(1, 1, 20, CancellationToken.None);
 
@@ -127,18 +127,18 @@ namespace CaseAcordos.Testes
             Assert.Equal(0, resposta.Resumo.QuantidadeAcordos);
             Assert.Equal(0, resposta.Resumo.QuantidadeDocumentos);
             await _repositorio.DidNotReceiveWithAnyArgs()
-                .ListarDocumentosPaginadosPorAutorAsync(default, default, default, default);
+                .ListarDocumentosPaginadosPorAutorExternoAsync(default, default, default, default);
         }
 
         [Fact]
         public async Task Consultar_AcordoSemDocumentos_RetornaListaVaziaETotalPaginasZero()
         {
-            _repositorio.ObterAutorAsync(1, Arg.Any<CancellationToken>()).Returns(AutorPadrao());
-            _repositorio.ListarAcordosAsync(1, Arg.Any<CancellationToken>()).Returns(new List<AcordoRegistro>
+            _repositorio.ObterAutorPorIdExternoAsync(1, Arg.Any<CancellationToken>()).Returns(AutorPadrao());
+            _repositorio.ListarAcordosPorAutorExternoAsync(1, Arg.Any<CancellationToken>()).Returns(new List<AcordoRegistro>
         {
-            new() { Id = 10, Titulo = "Sem docs", QuantidadeDocumentos = 0 }
+            new() { IdExterno = 10, Titulo = "Sem docs", QuantidadeDocumentos = 0 }
         });
-            _repositorio.ListarDocumentosPaginadosPorAutorAsync(default, default, default, default)
+            _repositorio.ListarDocumentosPaginadosPorAutorExternoAsync(default, default, default, default)
                 .ReturnsForAnyArgs(new List<DocumentoRegistro>());
 
             var resposta = await CriarServico().ConsultarPorAutorAsync(1, 1, 20, CancellationToken.None);
@@ -152,12 +152,12 @@ namespace CaseAcordos.Testes
         [Fact]
         public async Task Consultar_AutorInexistente_LancaRecursoNaoEncontrado()
         {
-            _repositorio.ObterAutorAsync(99, Arg.Any<CancellationToken>()).Returns((AutorRegistro?)null);
+            _repositorio.ObterAutorPorIdExternoAsync(99, Arg.Any<CancellationToken>()).Returns((AutorRegistro?)null);
 
             await Assert.ThrowsAsync<RecursoNaoEncontradoException>(
                 () => CriarServico().ConsultarPorAutorAsync(99, 1, 20, CancellationToken.None));
 
-            await _repositorio.DidNotReceiveWithAnyArgs().ListarAcordosAsync(default, default);
+            await _repositorio.DidNotReceiveWithAnyArgs().ListarAcordosPorAutorExternoAsync(default, default);
         }
 
         [Theory]
@@ -172,14 +172,14 @@ namespace CaseAcordos.Testes
             await Assert.ThrowsAsync<ValidacaoException>(
                 () => CriarServico().ConsultarPorAutorAsync(autorId, pagina, tamanho, CancellationToken.None));
 
-            await _repositorio.DidNotReceiveWithAnyArgs().ObterAutorAsync(default, default);
+            await _repositorio.DidNotReceiveWithAnyArgs().ObterAutorPorIdExternoAsync(default, default);
         }
 
         [Fact]
         public async Task Consultar_ComMascaramentoHabilitado_MascaraDadosPessoaisDoAutor()
         {
-            _repositorio.ObterAutorAsync(1, Arg.Any<CancellationToken>()).Returns(AutorPadrao());
-            _repositorio.ListarAcordosAsync(1, Arg.Any<CancellationToken>()).Returns(new List<AcordoRegistro>());
+            _repositorio.ObterAutorPorIdExternoAsync(1, Arg.Any<CancellationToken>()).Returns(AutorPadrao());
+            _repositorio.ListarAcordosPorAutorExternoAsync(1, Arg.Any<CancellationToken>()).Returns(new List<AcordoRegistro>());
 
             var resposta = await CriarServico(mascarar: true).ConsultarPorAutorAsync(1, 1, 20, CancellationToken.None);
 
@@ -195,9 +195,9 @@ namespace CaseAcordos.Testes
         [Fact]
         public async Task ConsultarDocumentos_AcordoDoAutor_RetornaPaginaEMetadados()
         {
-            _repositorio.ObterAcordoDoAutorAsync(1, 10, Arg.Any<CancellationToken>())
-                .Returns(new AcordoRegistro { Id = 10, Titulo = "Acordo A", QuantidadeDocumentos = 45 });
-            _repositorio.ListarDocumentosDoAcordoAsync(10, 20, 20, Arg.Any<CancellationToken>())
+            _repositorio.ObterAcordoDoAutorPorIdExternoAsync(1, 10, Arg.Any<CancellationToken>())
+                .Returns(new AcordoRegistro { IdExterno = 10, Titulo = "Acordo A", QuantidadeDocumentos = 45 });
+            _repositorio.ListarDocumentosDoAcordoPorIdExternoAsync(10, 20, 20, Arg.Any<CancellationToken>())
                 .Returns(new List<DocumentoRegistro> { Doc(21, 10), Doc(22, 10) });
 
             var resposta = await CriarServico().ConsultarDocumentosDoAcordoAsync(1, 10, 2, 20, CancellationToken.None);
@@ -214,9 +214,9 @@ namespace CaseAcordos.Testes
         [Fact]
         public async Task ConsultarDocumentos_UltimaPagina_NaoPossuiProxima()
         {
-            _repositorio.ObterAcordoDoAutorAsync(1, 10, Arg.Any<CancellationToken>())
-                .Returns(new AcordoRegistro { Id = 10, Titulo = "Acordo A", QuantidadeDocumentos = 45 });
-            _repositorio.ListarDocumentosDoAcordoAsync(10, 40, 20, Arg.Any<CancellationToken>())
+            _repositorio.ObterAcordoDoAutorPorIdExternoAsync(1, 10, Arg.Any<CancellationToken>())
+                .Returns(new AcordoRegistro { IdExterno = 10, Titulo = "Acordo A", QuantidadeDocumentos = 45 });
+            _repositorio.ListarDocumentosDoAcordoPorIdExternoAsync(10, 40, 20, Arg.Any<CancellationToken>())
                 .Returns(new List<DocumentoRegistro> { Doc(41, 10) });
 
             var resposta = await CriarServico().ConsultarDocumentosDoAcordoAsync(1, 10, 3, 20, CancellationToken.None);
@@ -227,7 +227,7 @@ namespace CaseAcordos.Testes
         [Fact]
         public async Task ConsultarDocumentos_AcordoDeOutroAutorOuInexistente_LancaRecursoNaoEncontrado()
         {
-            _repositorio.ObterAcordoDoAutorAsync(1, 10, Arg.Any<CancellationToken>()).Returns((AcordoRegistro?)null);
+            _repositorio.ObterAcordoDoAutorPorIdExternoAsync(1, 10, Arg.Any<CancellationToken>()).Returns((AcordoRegistro?)null);
 
             await Assert.ThrowsAsync<RecursoNaoEncontradoException>(
                 () => CriarServico().ConsultarDocumentosDoAcordoAsync(1, 10, 1, 20, CancellationToken.None));
