@@ -437,7 +437,26 @@ Para consultar a DLQ de consumo, substitua `acordos-dlq-ingestao` por `acordos-d
 
 ## Parte 4
 
-> **Status:** a responder.
+1. Se a carga falhar no meio da execução, como você saberia que isso aconteceu e como faria para reprocessar?
+1. R: a carga registra logs estruturados com o correlationId, quantidade de itens processados, mensagens publicadas e falhas. As falhas de ingestão são
+enviadas para a fila acordos-dlq-ingestao, enquanto falhas no consumo são enviadas para a fila acordos-dlq-consumo.
+Em produção, seriam criados alarmes no Datadog/Clouwatch para sinalizar falha na execução da carga a partir da existência de mensagens nas DLQs. Além disso, estabeleceria alarmes
+para sinalizar a ausência de execuções esperadas da carga, por exemplo, se a carga não for executada em 3h, bem como aumento de erros ou reentregas no SQS.
+Inicialmente, o reprocessamento poderia ser feito manualmente por meio de um redrive da DLQ para a fila original, após a análise e correção da causa. 
+Como a persistência utiliza transação e UPSERT idempotente, o reprocessamento não deverá duplicar os registros. Em uma evolução futura, 
+poderia ser criado um processo controlado de reprocessamento automatizado aberto via RITM e condicionado à aprovação dos gestores responsáveis.
+
+
+2. Quais três métricas ou alertas você acompanharia para a API e para a carga? Por quê? 
+2. R: dispobilidade e taxa de erros da API, como respostas 5xx, 4xx e falhas no health check, isso permite identificar indisponibilidade da aplicação ou banco.
+Monitoraria o número de falhas por execução, mensagens publicadas e quantidade de mensagens nas DLQs. Além de acompanhar o tempo de resposta dos endpoints, principalmente das consultas paginadas. O aumento da latência pode indicar 
+problemas de performance no banco ou na aplicação, que podem impactar a experiência do usuário e a confiabilidade do sistema.
+
+
+3. Que cuidados você teria com os dados pessoais dos autores?
+3. R: evitaria registrar dados pessoais completos nos logs e DLQs. Os logs devem utilizar identificadores técnicos, como CorrelationId, AutorId e AcordoId.
+Na resposta da API, retornaria apenas os dados necessários para o consumidor e manteria o mascaramento habilitado quando o ambiente exigir.
+Além disso, aplicaria criptografia em trânsito e em repouso (KMS).  
 
 ---
 
