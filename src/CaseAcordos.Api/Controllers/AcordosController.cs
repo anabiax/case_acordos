@@ -44,6 +44,8 @@ namespace CaseAcordos.Api.Controllers
             return Ok(resposta);
         }
 
+
+
         /// <summary>Lista, de forma paginada, os documentos de um acordo do autor.</summary>
         /// <param name="id">Identificador do autor (inteiro positivo).</param>
         /// <param name="acordoId">Identificador do acordo (inteiro positivo); deve pertencer ao autor.</param>

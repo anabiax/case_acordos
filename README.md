@@ -294,7 +294,7 @@ curl -H "X-Api-Key: <sua-chave>" "http://localhost:5289/api/v1/usuarios/1/acordo
 
 ## Roteiro de demonstração
 
-Roteiro para provocar cada cenário durante a apresentação.
+Roteiro para provocar cada cenário.
 
 ### 1. Fluxo feliz e idempotência
 
@@ -326,9 +326,74 @@ aws sqs receive-message --queue-url http://localstack:4566/000000000000/acordos-
 ```
 
 **b) API pública indisponível → retentativas → DLQ de ingestão**
+PowerShell:
+```powershell
+$env:JsonPlaceholder__UrlBase = "http://localhost:9/"
+dotnet run --project .\src\CaseAcordos.Ingestao\CaseAcordos.Ingestao.csproj
+```
+
+Ao finalizar o teste, remova a variável da sessão atual do PowerShell:
+
+```powershell
+Remove-Item Env:JsonPlaceholder__UrlBase
+```
+
+Bash:
 ```bash
 JsonPlaceholder__UrlBase=http://localhost:9/ dotnet run --project src/CaseAcordos.Ingestao
 ```
+
+`http://localhost:9/` não possui uma API escutando; por isso, a Ingestão falha ao
+consultar `/users`. A política de retentativa executa a tentativa inicial e até
+3 novas tentativas para falhas elegíveis, usando backoff exponencial com jitter.
+Depois de esgotar as tentativas, a falha é publicada na fila
+`acordos-dlq-ingestao` e a carga é encerrada com indicação de erro. No
+PowerShell, a sintaxe `$env:NomeDaVariavel = "valor"` é necessária; a atribuição
+vale somente para a sessão atual do terminal.
+
+## Consulta das mensagens nas DLQs (LocalStack)
+
+Com o LocalStack em execução, defina uma função auxiliar no PowerShell para executar o AWS CLI dentro da rede do Docker:
+
+```powershell
+function aws-local {
+    docker run --rm `
+        --network case-acordos_default `
+        -e AWS_ACCESS_KEY_ID=test `
+        -e AWS_SECRET_ACCESS_KEY=test `
+        -e AWS_DEFAULT_REGION=us-east-1 `
+        amazon/aws-cli `
+        --endpoint-url http://localstack:4566 @args
+}
+```
+
+Para verificar a quantidade de mensagens na DLQ de ingestão:
+
+```powershell
+aws-local sqs get-queue-attributes `
+    --queue-url http://localstack:4566/000000000000/acordos-dlq-ingestao `
+    --attribute-names ApproximateNumberOfMessages
+```
+
+Para verificar a quantidade de mensagens na DLQ de consumo:
+
+```powershell
+aws-local sqs get-queue-attributes `
+    --queue-url http://localstack:4566/000000000000/acordos-dlq-consumo `
+    --attribute-names ApproximateNumberOfMessages
+```
+
+Para visualizar as mensagens da DLQ de ingestão:
+
+```powershell
+aws-local sqs receive-message `
+    --queue-url http://localstack:4566/000000000000/acordos-dlq-ingestao `
+    --max-number-of-messages 10 `
+    --message-attribute-names All `
+    --visibility-timeout 0
+```
+
+Para consultar a DLQ de consumo, substitua `acordos-dlq-ingestao` por `acordos-dlq-consumo` na URL. O comando `receive-message` apenas lê as mensagens; ele não as remove da DLQ. O parâmetro `--visibility-timeout 0` mantém as mensagens imediatamente visíveis para novas consultas. Na DLQ de ingestão, o corpo contém a etapa, os identificadores, o erro e o `CorrelationId`; na DLQ de consumo, o corpo é a mensagem original e os atributos incluem o motivo da falha e o `MessageIdOriginal`.
 
 ### 3. Cenários da API de consulta
 

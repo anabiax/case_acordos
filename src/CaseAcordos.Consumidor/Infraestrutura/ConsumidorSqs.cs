@@ -109,7 +109,7 @@ public sealed class ConsumidorSqs : BackgroundService
         switch (resultado.Tipo)
         {
             case TipoResultado.Sucesso:
-                await ApagarAsync(urlFila, mensagem, ct);
+                await ApagarAsync(urlFila, mensagem, ct);    
                 break;
 
             case TipoResultado.FalhaNaoRetentavel:
@@ -154,6 +154,8 @@ public sealed class ConsumidorSqs : BackgroundService
         }
     }
 
+    // apaga a msg da fila de origem
+    // Esse fluxo é importante porque a mensagem só é apagada depois que o repositório confirma o COMMIT.
     private async Task ApagarAsync(string urlFila, Message mensagem, CancellationToken ct)
     {
         await _sqs.DeleteMessageAsync(

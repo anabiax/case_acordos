@@ -8,7 +8,7 @@ public sealed class OpcoesFilas
 {
     public const string Secao = "Filas";
 
-    /// <summary>Endpoint do LocalStack (ex.: http://localhost:4566). Vazio em produção.</summary>
+    /// <summary>Endpoint do LocalStack (ex.: http://localhost:4566).</summary>
     public string? UrlServicoSqs { get; set; }
 
     public string Regiao { get; set; } = "us-east-1";

@@ -58,6 +58,9 @@ public sealed class RepositorioAcordosPostgres(NpgsqlDataSource fonteDados)
         RETURNING id;
         """;
 
+    // ON CONFLICT ( ) - Essas combinações determinam quando o PostgreSQL deve considerar que o registro já existe.
+    //DO UPDATE
+
     private const string SqlAcordo = """
         INSERT INTO acordo (
             autor_id,
